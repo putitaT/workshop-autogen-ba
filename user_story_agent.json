@@ -1,0 +1,183 @@
+{
+    "provider": "autogen_agentchat.teams.RoundRobinGroupChat",
+    "component_type": "team",
+    "version": 1,
+    "component_version": 1,
+    "description": "A team that runs a group chat with participants taking turns in a round-robin fashion\n    to publish a message to all.",
+    "label": "RoundRobinGroupChat",
+    "config": {
+        "participants": [
+            {
+                "provider": "autogen_agentchat.agents.AssistantAgent",
+                "component_type": "agent",
+                "version": 1,
+                "component_version": 1,
+                "description": "An agent that provides assistance with tool use.",
+                "label": "AssistantAgent",
+                "config": {
+                    "name": "requirement_analyze_agent",
+                    "model_client": {
+                        "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+                        "component_type": "model",
+                        "version": 1,
+                        "component_version": 1,
+                        "description": "Chat completion client for OpenAI hosted models.",
+                        "label": "OpenAIChatCompletionClient",
+                        "config": {
+                            "model": "llama3.2:latest",
+                            "api_key": "ollama",
+                            "model_info": {
+                                "vision": false,
+                                "function_calling": true,
+                                "json_output": false,
+                                "family": "unknown"
+                            },
+                            "base_url": "http://localhost:11434/v1"
+                        }
+                    },
+                    "tools": [
+                        {
+                            "provider": "autogen_core.tools.FunctionTool",
+                            "component_type": "tool",
+                            "version": 1,
+                            "component_version": 1,
+                            "description": "Create custom tools by wrapping standard Python functions.",
+                            "label": "FunctionTool",
+                            "config": {
+                                "source_code": "async def get_requirement() -> any:\n    return Path(\"./document/req4.txt\").read_text(encoding=\"utf-8\")\n",
+                                "name": "get_requirement",
+                                "description": "",
+                                "global_imports": [],
+                                "has_cancellation_support": false
+                            }
+                        }
+                    ],
+                    "handoffs": [],
+                    "model_context": {
+                        "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+                        "component_type": "chat_completion_context",
+                        "version": 1,
+                        "component_version": 1,
+                        "description": "An unbounded chat completion context that keeps a view of the all the messages.",
+                        "label": "UnboundedChatCompletionContext",
+                        "config": {}
+                    },
+                    "description": "An agent that provides assistance with ability to use tools.",
+                    "system_message": "\u0e04\u0e38\u0e13\u0e04\u0e37\u0e2d Business Analyst \u0e17\u0e35\u0e48\u0e21\u0e35\u0e04\u0e27\u0e32\u0e21\u0e40\u0e0a\u0e35\u0e48\u0e22\u0e27\u0e0a\u0e32\u0e0d\u0e43\u0e19\u0e01\u0e32\u0e23\u0e27\u0e34\u0e40\u0e04\u0e23\u0e32\u0e30\u0e2b\u0e4c Requirement \u0e40\u0e1e\u0e37\u0e48\u0e2d\u0e2a\u0e23\u0e38\u0e1b\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e17\u0e35\u0e48\u0e2a\u0e33\u0e04\u0e31\u0e0d\u0e2a\u0e33\u0e2b\u0e23\u0e31\u0e1a\u0e01\u0e32\u0e23\u0e40\u0e02\u0e35\u0e22\u0e19 User Story  \n        \u0e2b\u0e19\u0e49\u0e32\u0e17\u0e35\u0e48\u0e02\u0e2d\u0e07\u0e04\u0e38\u0e13\u0e04\u0e37\u0e2d:\n        1. \u0e2d\u0e48\u0e32\u0e19\u0e41\u0e25\u0e30\u0e17\u0e33\u0e04\u0e27\u0e32\u0e21\u0e40\u0e02\u0e49\u0e32\u0e43\u0e08 Requirement \u0e17\u0e35\u0e48\u0e44\u0e14\u0e49\u0e23\u0e31\u0e1a\u0e08\u0e32\u0e01\u0e44\u0e1f\u0e25\u0e4c  \n        2. \u0e27\u0e34\u0e40\u0e04\u0e23\u0e32\u0e30\u0e2b\u0e4c\u0e41\u0e25\u0e30\u0e23\u0e30\u0e1a\u0e38\u0e2d\u0e07\u0e04\u0e4c\u0e1b\u0e23\u0e30\u0e01\u0e2d\u0e1a\u0e17\u0e35\u0e48\u0e2a\u0e33\u0e04\u0e31\u0e0d \u0e44\u0e14\u0e49\u0e41\u0e01\u0e48:\n            - \u0e27\u0e31\u0e15\u0e16\u0e38\u0e1b\u0e23\u0e30\u0e2a\u0e07\u0e04\u0e4c\u0e02\u0e2d\u0e07 Requirement (Goal)\n            - \u0e01\u0e25\u0e38\u0e48\u0e21\u0e1c\u0e39\u0e49\u0e43\u0e0a\u0e49\u0e07\u0e32\u0e19\u0e2b\u0e25\u0e31\u0e01 (Primary Users)\n            - \u0e1f\u0e31\u0e07\u0e01\u0e4c\u0e0a\u0e31\u0e19\u0e01\u0e32\u0e23\u0e17\u0e33\u0e07\u0e32\u0e19\u0e17\u0e35\u0e48\u0e15\u0e49\u0e2d\u0e07\u0e21\u0e35 (Core Functionalities)\n            - \u0e40\u0e07\u0e37\u0e48\u0e2d\u0e19\u0e44\u0e02\u0e2b\u0e23\u0e37\u0e2d\u0e02\u0e49\u0e2d\u0e01\u0e33\u0e2b\u0e19\u0e14\u0e1e\u0e34\u0e40\u0e28\u0e29 (Constraints)\n        3. \u0e08\u0e31\u0e14\u0e17\u0e33\u0e2a\u0e23\u0e38\u0e1b\u0e43\u0e19\u0e23\u0e39\u0e1b\u0e41\u0e1a\u0e1a\u0e17\u0e35\u0e48\u0e01\u0e23\u0e30\u0e0a\u0e31\u0e1a\u0e41\u0e25\u0e30\u0e0a\u0e31\u0e14\u0e40\u0e08\u0e19 \u0e40\u0e1e\u0e37\u0e48\u0e2d\u0e2a\u0e48\u0e07\u0e15\u0e48\u0e2d\u0e43\u0e2b\u0e49 `user_story_agent` \u0e43\u0e0a\u0e49\u0e40\u0e1b\u0e47\u0e19\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e15\u0e31\u0e49\u0e07\u0e15\u0e49\u0e19\u0e43\u0e19\u0e01\u0e32\u0e23\u0e40\u0e02\u0e35\u0e22\u0e19 User Story  \n\n        **\u0e2b\u0e21\u0e32\u0e22\u0e40\u0e2b\u0e15\u0e38:**  \n        - \u0e04\u0e38\u0e13\u0e15\u0e49\u0e2d\u0e07\u0e23\u0e30\u0e1a\u0e38\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e43\u0e2b\u0e49\u0e04\u0e23\u0e1a\u0e16\u0e49\u0e27\u0e19 \u0e41\u0e15\u0e48\u0e43\u0e0a\u0e49\u0e20\u0e32\u0e29\u0e32\u0e17\u0e35\u0e48\u0e01\u0e23\u0e30\u0e0a\u0e31\u0e1a \u0e41\u0e25\u0e30\u0e2b\u0e25\u0e35\u0e01\u0e40\u0e25\u0e35\u0e48\u0e22\u0e07\u0e04\u0e27\u0e32\u0e21\u0e01\u0e33\u0e01\u0e27\u0e21  \n        - \u0e2d\u0e22\u0e48\u0e32\u0e14\u0e31\u0e14\u0e41\u0e1b\u0e25\u0e07 Requirement \u0e2b\u0e23\u0e37\u0e2d\u0e40\u0e1e\u0e34\u0e48\u0e21\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e17\u0e35\u0e48\u0e44\u0e21\u0e48\u0e21\u0e35\u0e43\u0e19 Requirement \u0e40\u0e14\u0e34\u0e21",
+                    "model_client_stream": false,
+                    "reflect_on_tool_use": true,
+                    "tool_call_summary_format": "{result}"
+                }
+            },
+            {
+                "provider": "autogen_agentchat.agents.AssistantAgent",
+                "component_type": "agent",
+                "version": 1,
+                "component_version": 1,
+                "description": "An agent that provides assistance with tool use.",
+                "label": "AssistantAgent",
+                "config": {
+                    "name": "user_story_agent",
+                    "model_client": {
+                        "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+                        "component_type": "model",
+                        "version": 1,
+                        "component_version": 1,
+                        "description": "Chat completion client for OpenAI hosted models.",
+                        "label": "OpenAIChatCompletionClient",
+                        "config": {
+                            "model": "llama3.2:latest",
+                            "api_key": "ollama",
+                            "model_info": {
+                                "vision": false,
+                                "function_calling": true,
+                                "json_output": false,
+                                "family": "unknown"
+                            },
+                            "base_url": "http://localhost:11434/v1"
+                        }
+                    },
+                    "tools": [],
+                    "handoffs": [],
+                    "model_context": {
+                        "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+                        "component_type": "chat_completion_context",
+                        "version": 1,
+                        "component_version": 1,
+                        "description": "An unbounded chat completion context that keeps a view of the all the messages.",
+                        "label": "UnboundedChatCompletionContext",
+                        "config": {}
+                    },
+                    "description": "An agent that provides assistance with ability to use tools.",
+                    "system_message": "\u0e04\u0e38\u0e13\u0e04\u0e37\u0e2d Business Analyst \u0e17\u0e35\u0e48\u0e21\u0e35\u0e04\u0e27\u0e32\u0e21\u0e40\u0e0a\u0e35\u0e48\u0e22\u0e27\u0e0a\u0e32\u0e0d\u0e43\u0e19\u0e01\u0e32\u0e23\u0e40\u0e02\u0e35\u0e22\u0e19 User Story  \n        \u0e2b\u0e19\u0e49\u0e32\u0e17\u0e35\u0e48\u0e02\u0e2d\u0e07\u0e04\u0e38\u0e13\u0e04\u0e37\u0e2d:\n        1. \u0e19\u0e33\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e17\u0e35\u0e48\u0e44\u0e14\u0e49\u0e08\u0e32\u0e01 `requirement_analyze_agent` \u0e21\u0e32\u0e43\u0e0a\u0e49\u0e40\u0e1b\u0e47\u0e19\u0e41\u0e19\u0e27\u0e17\u0e32\u0e07\u0e43\u0e19\u0e01\u0e32\u0e23\u0e40\u0e02\u0e35\u0e22\u0e19 User Story  \n        2. \u0e40\u0e02\u0e35\u0e22\u0e19 User Story \u0e15\u0e32\u0e21\u0e2b\u0e25\u0e31\u0e01\u0e01\u0e32\u0e23 **As a [user role], I want [goal] so that [reason]**  \n        3. \u0e40\u0e1e\u0e34\u0e48\u0e21 **Business Logic**\n        4. \u0e40\u0e1e\u0e34\u0e48\u0e21 **Acceptance Criteria** \u0e40\u0e1e\u0e37\u0e48\u0e2d\u0e01\u0e33\u0e2b\u0e19\u0e14\u0e40\u0e07\u0e37\u0e48\u0e2d\u0e19\u0e44\u0e02\u0e17\u0e35\u0e48\u0e15\u0e49\u0e2d\u0e07\u0e1c\u0e48\u0e32\u0e19\u0e43\u0e19\u0e01\u0e32\u0e23\u0e1e\u0e31\u0e12\u0e19\u0e32  \n        5. \u0e15\u0e23\u0e27\u0e08\u0e2a\u0e2d\u0e1a\u0e27\u0e48\u0e32 User Story \u0e21\u0e35\u0e04\u0e27\u0e32\u0e21\u0e2a\u0e21\u0e1a\u0e39\u0e23\u0e13\u0e4c \u0e41\u0e25\u0e30\u0e04\u0e23\u0e2d\u0e1a\u0e04\u0e25\u0e38\u0e21\u0e17\u0e38\u0e01\u0e41\u0e07\u0e48\u0e21\u0e38\u0e21\u0e02\u0e2d\u0e07 Requirement  \n\n        **\u0e42\u0e04\u0e23\u0e07\u0e2a\u0e23\u0e49\u0e32\u0e07\u0e02\u0e2d\u0e07 User Story:**\n            ### STORY NAME: [story_name]\n            #### AS A  \n            [user role] \n            #### I WANT TO  \n            [goal] \n            #### SO THAT  \n            [reason]\n\n            **Business Logic:**  \n            - [BUSINESS_LOGIC]\n\n            **Acceptance Criteria:**  \n            - [ ] [LIST_ACCEPT_CRITERIA]  \n        ***************************\n\n        **\u0e2b\u0e21\u0e32\u0e22\u0e40\u0e2b\u0e15\u0e38:**  \n        - \u0e40\u0e02\u0e35\u0e22\u0e19\u0e43\u0e2b\u0e49\u0e2d\u0e48\u0e32\u0e19\u0e40\u0e02\u0e49\u0e32\u0e43\u0e08\u0e07\u0e48\u0e32\u0e22 \u0e41\u0e25\u0e30\u0e2a\u0e32\u0e21\u0e32\u0e23\u0e16\u0e43\u0e0a\u0e49\u0e1e\u0e31\u0e12\u0e19\u0e32\u0e44\u0e14\u0e49\u0e08\u0e23\u0e34\u0e07  \n        - \u0e2b\u0e25\u0e35\u0e01\u0e40\u0e25\u0e35\u0e48\u0e22\u0e07\u0e01\u0e32\u0e23\u0e43\u0e0a\u0e49\u0e20\u0e32\u0e29\u0e32\u0e17\u0e35\u0e48\u0e04\u0e25\u0e38\u0e21\u0e40\u0e04\u0e23\u0e37\u0e2d \u0e2b\u0e23\u0e37\u0e2d\u0e44\u0e21\u0e48\u0e2a\u0e32\u0e21\u0e32\u0e23\u0e16\u0e17\u0e14\u0e2a\u0e2d\u0e1a\u0e44\u0e14\u0e49\n        - \u0e2d\u0e22\u0e48\u0e32\u0e14\u0e31\u0e14\u0e41\u0e1b\u0e25\u0e07 response \u0e17\u0e35\u0e48\u0e44\u0e14\u0e49 \u0e42\u0e14\u0e22 response \u0e08\u0e30\u0e15\u0e49\u0e2d\u0e07\u0e15\u0e23\u0e07\u0e01\u0e31\u0e1a\u0e42\u0e04\u0e23\u0e07\u0e2a\u0e23\u0e49\u0e32\u0e07\u0e02\u0e2d\u0e07 User Story \u0e17\u0e35\u0e48\u0e01\u0e33\u0e2b\u0e19\u0e14\u0e40\u0e17\u0e48\u0e32\u0e19\u0e31\u0e49\u0e19",
+                    "model_client_stream": false,
+                    "reflect_on_tool_use": false,
+                    "tool_call_summary_format": "{result}"
+                }
+            },
+            {
+                "provider": "autogen_agentchat.agents.AssistantAgent",
+                "component_type": "agent",
+                "version": 1,
+                "component_version": 1,
+                "description": "An agent that provides assistance with tool use.",
+                "label": "AssistantAgent",
+                "config": {
+                    "name": "api_agent",
+                    "model_client": {
+                        "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+                        "component_type": "model",
+                        "version": 1,
+                        "component_version": 1,
+                        "description": "Chat completion client for OpenAI hosted models.",
+                        "label": "OpenAIChatCompletionClient",
+                        "config": {
+                            "model": "llama3.2:latest",
+                            "api_key": "ollama",
+                            "model_info": {
+                                "vision": false,
+                                "function_calling": true,
+                                "json_output": false,
+                                "family": "unknown"
+                            },
+                            "base_url": "http://localhost:11434/v1"
+                        }
+                    },
+                    "tools": [
+                        {
+                            "provider": "autogen_core.tools.FunctionTool",
+                            "component_type": "tool",
+                            "version": 1,
+                            "component_version": 1,
+                            "description": "Create custom tools by wrapping standard Python functions.",
+                            "label": "FunctionTool",
+                            "config": {
+                                "source_code": "async def post_user_story(user_story: str) -> str:\n    api_url = \"https://poc-ba-helper-service-3484833342.asia-southeast1.run.app/api/v1/userstory/create\"\n    payload = {\n        \"title\": \"test\",\n        \"description\": user_story,\n        \"priority\": \"Medium\",\n        \"status\": \"To Do\"\n    }\n    async with aiohttp.ClientSession() as session:\n        async with session.post(api_url, json=payload) as response:\n            if response.status == 200:\n                return \"\u2705 User Story \u0e16\u0e39\u0e01\u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01\u0e40\u0e23\u0e35\u0e22\u0e1a\u0e23\u0e49\u0e2d\u0e22\u0e41\u0e25\u0e49\u0e27!\"\n            else:\n                return f\"\u274c \u0e44\u0e21\u0e48\u0e2a\u0e32\u0e21\u0e32\u0e23\u0e16\u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01 User Story \u0e44\u0e14\u0e49: {await response.text()}\"\n",
+                                "name": "post_user_story",
+                                "description": "",
+                                "global_imports": [],
+                                "has_cancellation_support": false
+                            }
+                        }
+                    ],
+                    "handoffs": [],
+                    "model_context": {
+                        "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+                        "component_type": "chat_completion_context",
+                        "version": 1,
+                        "component_version": 1,
+                        "description": "An unbounded chat completion context that keeps a view of the all the messages.",
+                        "label": "UnboundedChatCompletionContext",
+                        "config": {}
+                    },
+                    "description": "An agent that provides assistance with ability to use tools.",
+                    "system_message": "\u0e04\u0e38\u0e13\u0e04\u0e37\u0e2d\u0e23\u0e30\u0e1a\u0e1a\u0e17\u0e35\u0e48\u0e23\u0e31\u0e1a\u0e1c\u0e34\u0e14\u0e0a\u0e2d\u0e1a\u0e01\u0e32\u0e23\u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01 User Story \u0e08\u0e32\u0e01 `user_story_agent` \u0e43\u0e19\u0e23\u0e39\u0e1b\u0e41\u0e1a\u0e1a string \u0e40\u0e17\u0e48\u0e32\u0e19\u0e31\u0e49\u0e19\n        \u0e2b\u0e19\u0e49\u0e32\u0e17\u0e35\u0e48\u0e02\u0e2d\u0e07\u0e04\u0e38\u0e13\u0e04\u0e37\u0e2d:\n        1. \u0e19\u0e33 response \u0e17\u0e35\u0e48\u0e44\u0e14\u0e49\u0e08\u0e32\u0e01 `user_story_agent` \u0e21\u0e32\u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01\u0e44\u0e1b\u0e22\u0e31\u0e07 API \u0e42\u0e14\u0e22\u0e44\u0e21\u0e48\u0e15\u0e49\u0e2d\u0e07\u0e14\u0e31\u0e14\u0e41\u0e1b\u0e25\u0e07 response \u0e17\u0e35\u0e48\u0e44\u0e14\u0e49\u0e23\u0e31\u0e1a\u0e21\u0e32\n        2. \u0e15\u0e23\u0e27\u0e08\u0e2a\u0e2d\u0e1a\u0e43\u0e2b\u0e49\u0e41\u0e19\u0e48\u0e43\u0e08\u0e27\u0e48\u0e32 User Story \u0e17\u0e35\u0e48\u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01\u0e44\u0e1b\u0e22\u0e31\u0e07 API \u0e44\u0e21\u0e48\u0e21\u0e35\u0e01\u0e32\u0e23\u0e14\u0e31\u0e14\u0e41\u0e1b\u0e25\u0e07\u0e08\u0e32\u0e01\u0e17\u0e35\u0e48\u0e44\u0e14\u0e49\u0e23\u0e31\u0e1a\u0e21\u0e32\u0e08\u0e32\u0e01 `user_story_agent`\n        3. \u0e40\u0e23\u0e35\u0e22\u0e01 API \u0e40\u0e1e\u0e37\u0e48\u0e2d\u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01 User Story\n        \n        **\u0e2b\u0e21\u0e32\u0e22\u0e40\u0e2b\u0e15\u0e38:**\n        - \u0e01\u0e48\u0e2d\u0e19\u0e08\u0e1a\u0e01\u0e32\u0e23\u0e17\u0e33\u0e07\u0e32\u0e19\u0e08\u0e15\u0e49\u0e2d\u0e07\u0e21\u0e35\u0e01\u0e32\u0e23\u0e40\u0e23\u0e35\u0e22\u0e01 API \u0e17\u0e38\u0e01\u0e04\u0e23\u0e31\u0e49\u0e07",
+                    "model_client_stream": false,
+                    "reflect_on_tool_use": false,
+                    "tool_call_summary_format": "{result}"
+                }
+            }
+        ],
+        "max_turns": 3
+    }
+}
