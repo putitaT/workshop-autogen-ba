@@ -1,0 +1,197 @@
+{
+    "provider": "autogen_agentchat.teams.RoundRobinGroupChat",
+    "component_type": "team",
+    "version": 1,
+    "component_version": 1,
+    "description": "A team that runs a group chat with participants taking turns in a round-robin fashion\n    to publish a message to all.",
+    "label": "RoundRobinGroupChat",
+    "config": {
+        "participants": [
+            {
+                "provider": "autogen_agentchat.agents.AssistantAgent",
+                "component_type": "agent",
+                "version": 1,
+                "component_version": 1,
+                "description": "An agent that provides assistance with tool use.",
+                "label": "AssistantAgent",
+                "config": {
+                    "name": "requirement_analyze_agent",
+                    "model_client": {
+                        "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+                        "component_type": "model",
+                        "version": 1,
+                        "component_version": 1,
+                        "description": "Chat completion client for OpenAI hosted models.",
+                        "label": "OpenAIChatCompletionClient",
+                        "config": {
+                            "model": "gpt-4o-mini"
+                        }
+                    },
+                    "tools": [
+                        {
+                            "provider": "autogen_core.tools.FunctionTool",
+                            "component_type": "tool",
+                            "version": 1,
+                            "component_version": 1,
+                            "description": "Create custom tools by wrapping standard Python functions.",
+                            "label": "FunctionTool",
+                            "config": {
+                                "source_code": "async def get_requirement() -> any:\n    return Path(\"./document/req4.txt\").read_text(encoding=\"utf-8\")\n",
+                                "name": "get_requirement",
+                                "description": "",
+                                "global_imports": [],
+                                "has_cancellation_support": false
+                            }
+                        }
+                    ],
+                    "handoffs": [],
+                    "model_context": {
+                        "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+                        "component_type": "chat_completion_context",
+                        "version": 1,
+                        "component_version": 1,
+                        "description": "An unbounded chat completion context that keeps a view of the all the messages.",
+                        "label": "UnboundedChatCompletionContext",
+                        "config": {}
+                    },
+                    "description": "An agent that provides assistance with ability to use tools.",
+                    "system_message": "\n        You are a Business Analyst specializing in requirement analysis to extract key information for writing User Stories. \n        Your responsibilities include:\n        1. Reading and understanding the given requirements from a file.\n        2. Analyzing and identifying essential components, such as:\n            - Objective of the requirement (Goal)\n            - Primary user group\n            - Core functionalities needed\n            - Constraints or special conditions\n        3. Summarizing the information concisely and clearly to provide input for the `user_story_agent` in writing the User Story.\n        \n        **Notes:**\n        - Provide complete information while keeping it concise and avoiding ambiguity.\n        - Do not modify the original requirements or add non-existent information.\n        ",
+                    "model_client_stream": false,
+                    "reflect_on_tool_use": true,
+                    "tool_call_summary_format": "{result}"
+                }
+            },
+            {
+                "provider": "autogen_agentchat.agents.AssistantAgent",
+                "component_type": "agent",
+                "version": 1,
+                "component_version": 1,
+                "description": "An agent that provides assistance with tool use.",
+                "label": "AssistantAgent",
+                "config": {
+                    "name": "user_story_agent",
+                    "model_client": {
+                        "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+                        "component_type": "model",
+                        "version": 1,
+                        "component_version": 1,
+                        "description": "Chat completion client for OpenAI hosted models.",
+                        "label": "OpenAIChatCompletionClient",
+                        "config": {
+                            "model": "gpt-4o-mini"
+                        }
+                    },
+                    "tools": [],
+                    "handoffs": [],
+                    "model_context": {
+                        "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+                        "component_type": "chat_completion_context",
+                        "version": 1,
+                        "component_version": 1,
+                        "description": "An unbounded chat completion context that keeps a view of the all the messages.",
+                        "label": "UnboundedChatCompletionContext",
+                        "config": {}
+                    },
+                    "description": "An agent that provides assistance with ability to use tools.",
+                    "system_message": "\n        You are a Business Analyst specializing in writing User Stories.\n        Your responsibilities include:\n        1. Utilizing the information from `requirement_analyze_agent` as a guideline for writing the User Story.\n        2. Writing User Stories following the structure: **As a [user role], I want [goal] so that [reason].**\n        3. Adding **Business Logic**.\n        4. Adding **Acceptance Criteria** to define conditions for development validation.\n        5. Ensuring that the User Story is complete and covers all aspects of the requirement.\n        \n        **User Story Structure:**\n            ### STORY NAME: [story_name]\n            #### AS A  \n            [user role] \n            #### I WANT TO  \n            [goal] \n            #### SO THAT  \n            [reason]\n\n            **Business Logic:**  \n            - [BUSINESS_LOGIC]\n\n            **Acceptance Criteria:**  \n            - [ ] [LIST_ACCEPT_CRITERIA]  \n        ***************************\n        \n        **Notes:**\n        - Write in a way that is easy to understand and implement.\n        - Avoid vague or untestable language.\n        - Do not modify the response structure, ensuring it adheres exactly to the required format.\n        ",
+                    "model_client_stream": false,
+                    "reflect_on_tool_use": false,
+                    "tool_call_summary_format": "{result}"
+                }
+            },
+            {
+                "provider": "autogen_agentchat.agents.AssistantAgent",
+                "component_type": "agent",
+                "version": 1,
+                "component_version": 1,
+                "description": "An agent that provides assistance with tool use.",
+                "label": "AssistantAgent",
+                "config": {
+                    "name": "translator_agent",
+                    "model_client": {
+                        "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+                        "component_type": "model",
+                        "version": 1,
+                        "component_version": 1,
+                        "description": "Chat completion client for OpenAI hosted models.",
+                        "label": "OpenAIChatCompletionClient",
+                        "config": {
+                            "model": "gpt-4o-mini"
+                        }
+                    },
+                    "tools": [],
+                    "handoffs": [],
+                    "model_context": {
+                        "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+                        "component_type": "chat_completion_context",
+                        "version": 1,
+                        "component_version": 1,
+                        "description": "An unbounded chat completion context that keeps a view of the all the messages.",
+                        "label": "UnboundedChatCompletionContext",
+                        "config": {}
+                    },
+                    "description": "An agent that provides assistance with ability to use tools.",
+                    "system_message": "\n        Your responsibility is to translate the User Story received from `user_story_agent` into Thai.\n        \n        **Translation Guidelines:**\n        1. Translate the content into formal and easy-to-read Thai.\n        2. No need to translate specific words and technical terms such as function names, story name, software-related terminology, and words that should not be translated \n        (e.g., \"User Story\", \"Business Logic\", \"Acceptance Criteria\", \"User Name\", \"AS A\", \"I WANT TO\", \"SO THAT\") **USE ENGLISH AS USUAL**.\n        3. Maintain the structure of the User Story and do not alter the original content.\n        4. Avoid translations that could introduce ambiguity or change the meaning.\n        \n        **Notes:**\n        - If unsure whether a term should be translated, retain the original term in parentheses.\n        ",
+                    "model_client_stream": false,
+                    "reflect_on_tool_use": false,
+                    "tool_call_summary_format": "{result}"
+                }
+            },
+            {
+                "provider": "autogen_agentchat.agents.AssistantAgent",
+                "component_type": "agent",
+                "version": 1,
+                "component_version": 1,
+                "description": "An agent that provides assistance with tool use.",
+                "label": "AssistantAgent",
+                "config": {
+                    "name": "api_agent",
+                    "model_client": {
+                        "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+                        "component_type": "model",
+                        "version": 1,
+                        "component_version": 1,
+                        "description": "Chat completion client for OpenAI hosted models.",
+                        "label": "OpenAIChatCompletionClient",
+                        "config": {
+                            "model": "gpt-4o-mini"
+                        }
+                    },
+                    "tools": [
+                        {
+                            "provider": "autogen_core.tools.FunctionTool",
+                            "component_type": "tool",
+                            "version": 1,
+                            "component_version": 1,
+                            "description": "Create custom tools by wrapping standard Python functions.",
+                            "label": "FunctionTool",
+                            "config": {
+                                "source_code": "async def post_user_story(user_story: str, story_name: str) -> str:\n    api_url = \"https://poc-ba-helper-service-3484833342.asia-southeast1.run.app/api/v1/userstory/create\"\n    payload = {\n        \"title\": story_name,\n        \"description\": user_story,\n        \"priority\": \"Medium\",\n        \"status\": \"To Do\"\n    }\n    async with aiohttp.ClientSession() as session:\n        async with session.post(api_url, json=payload) as response:\n            if response.status == 200:\n                return \"\u2705 User Story \u0e16\u0e39\u0e01\u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01\u0e40\u0e23\u0e35\u0e22\u0e1a\u0e23\u0e49\u0e2d\u0e22\u0e41\u0e25\u0e49\u0e27!\"\n            else:\n                return f\"\u274c \u0e44\u0e21\u0e48\u0e2a\u0e32\u0e21\u0e32\u0e23\u0e16\u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01 User Story \u0e44\u0e14\u0e49: {await response.text()}\"\n",
+                                "name": "post_user_story",
+                                "description": "",
+                                "global_imports": [],
+                                "has_cancellation_support": false
+                            }
+                        }
+                    ],
+                    "handoffs": [],
+                    "model_context": {
+                        "provider": "autogen_core.model_context.UnboundedChatCompletionContext",
+                        "component_type": "chat_completion_context",
+                        "version": 1,
+                        "component_version": 1,
+                        "description": "An unbounded chat completion context that keeps a view of the all the messages.",
+                        "label": "UnboundedChatCompletionContext",
+                        "config": {}
+                    },
+                    "description": "An agent that provides assistance with ability to use tools.",
+                    "system_message": "\n        You are responsible for saving the User Story from `translator_agent` in string format only.\n        Your tasks include:\n        1. Receiving the response from `translator_agent` and storing it in an API without modifying it.\n        2. Ensuring that the User Story saved in the API matches exactly what was received from `translator_agent`.\n        3. Calling the API to save the User Story.\n        \n        **Note:**\n        - The API call must be made at the end of the process.\n        ",
+                    "model_client_stream": false,
+                    "reflect_on_tool_use": false,
+                    "tool_call_summary_format": "{result}"
+                }
+            }
+        ],
+        "max_turns": 4
+    }
+}

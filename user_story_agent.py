@@ -18,26 +18,20 @@ async def get_requirement() -> any:
     return Path("./document/req4.txt").read_text(encoding="utf-8")
 
 async def get_requirement_from_excel() -> str:
-    file_path = "./document/Requirement_ibank_Phase3.xlsx" 
+    file_path = "./document/Requirement_ibank_Phase3.xlsx"
     sheet_name = "Product Condition Business"
     try:
         df = pd.read_excel(file_path, sheet_name=sheet_name, engine="openpyxl")
 
         if df.empty:
-            return "not have information from excel"
+            return []
 
         requirements_list = df.to_dict(orient="records")
 
-        formatted_text = ""
-        for i, row in enumerate(requirements_list, start=1):
-            formatted_text += f"**Requirement {i}:**\n"
-            for key, value in row.items():
-                formatted_text += f"   - **{key}**: {value}\n"
-            formatted_text += "\n"
-
-        return
+        return requirements_list
+    
     except Exception as e:
-        return f"Error Read Excel: {str(e)}"
+        return f"Error reading Excel: {str(e)}"
 
 # async def get_example_user_story() -> any:
 #     return Path("./document/example_user_story.txt").read_text(encoding="utf-8")
@@ -58,31 +52,7 @@ async def post_user_story(user_story: str, story_name: str) -> str:
                 return f"❌ ไม่สามารถบันทึก User Story ได้: {await response.text()}"
 
 async def main():
-    # model_client = OpenAIChatCompletionClient(
-    #     model="llama3.2:latest",
-    #     base_url=os.environ["OLLAMA_BASE_URL"],
-    #     api_key=os.environ["OPENAI_API_KEY"],
-    #     model_info=ModelInfo(
-    #         vision=False,
-    #         function_calling=True,
-    #         json_output=False,
-    #         family=ModelFamily.UNKNOWN
-    #     )
-    # )
-
     model_client = OpenAIChatCompletionClient(model="gpt-4o-mini")
-
-    model_client_ollama_vision = OpenAIChatCompletionClient(
-        model="llama3.2-vision:latest",
-        base_url=os.environ["OLLAMA_BASE_URL"],
-        api_key=os.environ["OPENAI_API_KEY"],
-        model_info=ModelInfo(
-            vision=True,
-            function_calling=True,
-            json_output=False,
-            family=ModelFamily.UNKNOWN
-        )
-    )
 
     requirement_analyze_agent = AssistantAgent(
         name="requirement_analyze_agent",
@@ -102,8 +72,8 @@ async def main():
         - Provide complete information while keeping it concise and avoiding ambiguity.
         - Do not modify the original requirements or add non-existent information.
         """,
-        tools=[get_requirement],
-        reflect_on_tool_use=True
+        tools=[get_requirement_from_excel],
+        # reflect_on_tool_use=True
     )
 
     user_story_agent = AssistantAgent(
@@ -141,19 +111,19 @@ async def main():
         """
     )
 
-    message = MultiModalMessage(
-        content=[
-            "You are a UI analyst. Explain every element in this image in detail, including all visible components and related functions.",
-            Image.from_file("/Users/a677231/workspace/ba-helper-agent/document/picture/ibank_advance_tranfer_list.png")
-        ],
-        source="analyze_ui_agent",
-    )
+    # message = MultiModalMessage(
+    #     content=[
+    #         "You are a UI analyst. Explain every element in this image in detail, including all visible components and related functions.",
+    #         Image.from_file("/Users/a677231/workspace/ba-helper-agent/document/picture/ibank_advance_tranfer_list.png")
+    #     ],
+    #     source="analyze_ui_agent",
+    # )
 
-    analyze_ui_agent = AssistantAgent(
-        name="analyze_ui_agent",
-        model_client=model_client,
-        system_message="You are a UX/UI Designer. Provide a detailed explanation of every UI element and related functions. ***RESPONSE IN THAI ONLY***"
-    )
+    # analyze_ui_agent = AssistantAgent(
+    #     name="analyze_ui_agent",
+    #     model_client=model_client,
+    #     system_message="You are a UX/UI Designer. Provide a detailed explanation of every UI element and related functions. ***RESPONSE IN THAI ONLY***"
+    # )
 
     translator_agent = AssistantAgent(
         name="translator_agent",
@@ -207,14 +177,14 @@ async def main():
         max_turns=3,
     )
 
-    have_pic = input("คุณมีรูปภาพ User Interface สำหรับ requirement นี้หรือไม่ (Y/n): ")
+    # have_pic = input("คุณมีรูปภาพ User Interface สำหรับ requirement นี้หรือไม่ (Y/n): ")
 
-    if have_pic.lower() == 'y':
-        vision_stream = analyze_ui_agent.run_stream(task=message)
-        await Console(vision_stream)
+    # if have_pic.lower() == 'y':
+    #     vision_stream = analyze_ui_agent.run_stream(task=message)
+    #     await Console(vision_stream)
 
 
-    stream = final_team.run_stream(task="เขียน User Story จาก Requirement ที่ได้มา")
+    stream = final_team.run_stream(task="Write User Story from recieve requirement")
     await Console(stream)
 
     # with open("user_story_agent_team.json", "w") as f:
